@@ -64,24 +64,12 @@ CREATE TABLE maintenance (
     FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
 );
 
-CREATE TABLE payments (
-    payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rental_id INTEGER,
-    amount DECIMAL(10, 2) NOT NULL,
-    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    payment_method TEXT,
-    payment_status TEXT CHECK (
-        payment_status IN ('pending', 'completed', 'failed')
-    ) DEFAULT 'pending',
-    FOREIGN KEY (rental_id) REFERENCES rentals (rental_id)
-);
-
 INSERT INTO
     staff (username, password, full_name, email)
 VALUES
     (
         'admin',
-        '{bcrypt}$2a$10$546FiLz/YDG81EIThLzSZeZIurLV.HB2rvuERmAs1zmsYzPvXmYDO',
+        '$2b$12$LWdTnqauV6Qxv2wcKl306ehLM0zUCKlvFKJiY5NF7qLySZD6qBxQS',
         'Admin User',
         'admin@email.com'
     );
