@@ -99,14 +99,18 @@ class VehiclesRepository:
         query = "UPDATE vehicles SET status = ? WHERE vehicle_id = ?"
         self.db.execute(query, (status, vehicle_id))
 
-    def get_by_id(self, vehicle_id: int) -> Optional[Tuple]:
+    def get_by_id(self, vehicle_id: int) -> Optional[Vehicles]:
         """Retrieves a vehicle by ID."""
         query = """
         SELECT vehicle_id, brand, model, year, license_plate, mileage, daily_rate, description, status
         FROM vehicles
         WHERE vehicle_id = ?
         """
-        return self.db.fetch_one(query, (vehicle_id,))
+        result = self.db.fetch_one(query, (vehicle_id,))
+        if result is None:
+            return None
+        else:
+            return Vehicles(*result)
 
     def update_after_return(self, vehicle_id: int, return_mileage: int) -> None:
         """Updates vehicle mileage after a rental is completed."""

@@ -2,6 +2,7 @@ from rich import print
 from rich.prompt import Prompt
 
 import globals
+from command import maintenance
 from command.customers import CustomerCommand
 from command.help import HelpCommand
 from command.rentals import RentalCommand
@@ -31,6 +32,7 @@ def main():
     staff_command = StaffCommand()
     vehicle_command = VehicleCommand()
     rental_command = RentalCommand()
+    maintenance_command = maintenance.MaintenanceCommand()
     while True:
         command = input("crs> ")
         if command == "/bye":
@@ -46,6 +48,8 @@ def main():
             vehicle_command.handle_command(command)
         elif command.startswith("/rental"):
             rental_command.handle_command(command)
+        elif command.startswith("/maintenance"):
+            maintenance_command.handle_command(command)
         else:
             print(f"Unknown command: {command}")
 

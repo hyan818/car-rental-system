@@ -78,12 +78,22 @@ class RentalCommand:
             return
 
         # Check if vehicle is available
-        if vehicle[8] != "available":
+        if vehicle.status != "available":
             print("[red]Vehicle is not available for rent[/red]")
             return
 
-        rental.initial_mileage = vehicle[5]  # mileage from vehicle record
-        rental.total_cost = vehicle[6] * days  # daily_rate * days
+        if vehicle.mileage is None:
+            print(
+                "[yellow]Warning: Vehicle mileage is 0, consider checking the vehicle before rental[/yellow]"
+            )
+            return
+        rental.initial_mileage = vehicle.mileage  # mileage from vehicle record
+
+        if vehicle.daily_rate is None:
+            print("[red]Vehicle daily rate is not set[/red]")
+            return
+
+        rental.total_cost = vehicle.daily_rate * days  # daily_rate * days
 
         # Update vehicle status
         self.vehicle_repo.update_status(rental.vehicle_id, "rented")
