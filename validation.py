@@ -4,52 +4,40 @@ from rich import print
 from rich.prompt import Prompt
 
 
-def validate_digit(id):
-    if id.isdigit():
+def validate_digit(str):
+    """Validates if the given string is digit"""
+    if str.isdigit():
         return True
     return False
 
 
 def validate_email(email):
+    """Validates if the given email is valid"""
     if email.count("@") == 1 and email.count(".") > 0:
         return True
     return False
 
 
 def validate_phone(phone):
+    """Validates if the given phone is valid"""
     if phone.isdigit() and len(phone) == 10:
         return True
-    pass
+    return False
 
 
 def get_validated_input(prompt, validator=None, optional=False):
+    """Validates input with validator"""
     while True:
         value = Prompt.ask(prompt)
         if optional and not value:
             return ""
         if not validator or validator(value):
             return value
-        print("Invalid input. Please try again.")
+        print("[red]Invalid input. Please try again.[/red]")
 
 
 def validate_price(price: str) -> bool:
-    """
-    Validates if the given price is a positive number.
-
-    Args:
-        price: String representing a price value
-
-    Returns:
-        bool: True if valid, False otherwise
-
-    Examples:
-        >>> validate_price("50.00")
-        True
-        >>> validate_price("-10.00")
-        False
-        >>> validate_price("abc")
-        False
-    """
+    """Validates if the given price is a positive number."""
     try:
         price_float = float(price)
         if price_float <= 0:
@@ -62,23 +50,7 @@ def validate_price(price: str) -> bool:
 
 
 def validate_year(year: str) -> bool:
-    """
-    Validates if the given year is a valid year between 1900 and current year + 1.
-
-    Args:
-        year: String representing a year
-
-    Returns:
-        bool: True if valid, False otherwise
-
-    Examples:
-        >>> validate_year("2023")
-        True
-        >>> validate_year("1899")
-        False
-        >>> validate_year("abc")
-        False
-    """
+    """Validates if the given year is a valid year between 1900 and current year + 1."""
     try:
         year_int = int(year)
         current_year = datetime.date.today().year

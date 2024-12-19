@@ -1,20 +1,19 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from db.database import Database
-
-global current_staff
 
 
 @dataclass
 class Staff:
     staff_id: Optional[int] = None
-    username: str = ""
+    username: Optional[str] = None
     password: str = ""
-    full_name: str = ""
-    email: str = ""
-    created_at: str = ""
-    last_login: str = ""
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    created_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
 
 
 class StaffRepository:
@@ -23,22 +22,14 @@ class StaffRepository:
     def __init__(self):
         self.db = Database()
 
-    def get_by_username(self, username) -> Staff | None:
+    def get_by_username(self, username) -> Optional[Staff]:
         """Get staff by username"""
 
         query = "SELECT * FROM staff WHERE username = ?"
         result = self.db.fetch_one(query, (username,))
         if result is None:
             return None
-        staff = Staff()
-        staff.staff_id = result[0]
-        staff.username = result[1]
-        staff.password = result[2]
-        staff.full_name = result[3]
-        staff.email = result[4]
-        staff.created_at = result[5]
-        staff.last_login = result[6]
-        return staff
+        return Staff(*result)
 
     def update_password(self, staff: Staff):
         """Update staff password"""
@@ -89,7 +80,12 @@ class StaffRepository:
             ),
         )
 
-    def delete(self, staff_id):
+    def delete(self, staff_id) -> None:
         """Deletes a staff from the database"""
         query = "DELETE FROM staff WHERE staff_id = ?"
         self.db.execute(query, (staff_id,))
+
+    def update_last_login(self, staff_id: int) -> None:
+        """Update staff last login time"""
+        query = "UPDATE staff SET last_login = ? where staff_id = ?"
+        self.db.execute(query, (datetime.now(), staff_id))

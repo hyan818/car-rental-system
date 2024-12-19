@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from db.database import Database
@@ -7,27 +8,22 @@ from db.database import Database
 @dataclass
 class Customers:
     customer_id: Optional[int] = None
-    full_name: str = ""
-    email: str = ""
-    phone: str = ""
-    address: str = ""
-    driver_license: str = ""
-    create_at: str = ""
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    driver_license: Optional[str] = None
+    create_at: Optional[datetime] = None
 
 
 class CustomersRepository:
-    """
-    Perform CRUD operations on the customers table
-    """
+    """Perform CRUD operations on the customers table"""
 
     def __init__(self):
         self.db = Database()
 
     def get(self, search_str):
-        """
-        Retrieves customers from the database
-        """
-
+        """Retrieves customers from the database"""
         query = """
         SELECT * FROM customers WHERE full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR driver_license LIKE ?
         """
@@ -42,10 +38,7 @@ class CustomersRepository:
         )
 
     def add(self, customer: Customers):
-        """
-        Adds a new customer to the database
-        """
-
+        """Adds a new customer to the database"""
         query = """
         INSERT INTO customers(full_name, email, phone, address, driver_license) VALUES(?, ?, ?, ?, ?)
         """
@@ -61,10 +54,7 @@ class CustomersRepository:
         )
 
     def update(self, customer: Customers):
-        """
-        Updates an existing customer in the database
-        """
-
+        """Updates an existing customer in the database"""
         query = "SELECT * FROM customers WHERE customer_id = ?"
         current_customer = self.db.fetch_one(query, (customer.customer_id,))
         if not current_customer:
@@ -93,10 +83,7 @@ class CustomersRepository:
         )
 
     def delete(self, id):
-        """
-        Deletes a customer from the database
-        """
-
+        """Deletes a customer from the database"""
         query = """
         DELETE FROM customers WHERE customer_id = ?
         """

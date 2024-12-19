@@ -34,7 +34,7 @@ def main():
     rental_command = RentalCommand()
     maintenance_command = maintenance.MaintenanceCommand()
     while True:
-        command = input("crs> ")
+        command = input(">>> ")
         if command == "/bye":
             print("Goodbye!")
             break

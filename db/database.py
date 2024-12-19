@@ -4,14 +4,9 @@ from typing import List, Optional, Tuple
 
 
 class Database:
-    """
-    A class to handle SQLite database operations.
-    """
+    """A class to handle SQLite database operations."""
 
     def __init__(self, db_name: str = "crs.db"):
-        """
-        Initializes the database connection.
-        """
         self.db_name = f"./db/{db_name}"
 
     @contextmanager
@@ -41,13 +36,7 @@ class Database:
                 cursor.close()
 
     def execute(self, query: str, params: tuple = ()) -> None:
-        """
-        Executes a query and commits changes.
-
-        Args:
-            query: SQL query to execute
-            params: Parameters for the query
-        """
+        """Executes a query and commits changes."""
         try:
             with self.get_cursor() as cursor:
                 cursor.execute(query, params)
@@ -56,16 +45,7 @@ class Database:
             raise
 
     def fetch_all(self, query: str, params: tuple = ()) -> List[Tuple]:
-        """
-        Executes a query and returns all results.
-
-        Args:
-            query: SQL query to execute
-            params: Parameters for the query
-
-        Returns:
-            List of tuples containing the query results
-        """
+        """Executes a query and returns all results."""
         try:
             with self.get_cursor() as cursor:
                 cursor.execute(query, params)
@@ -75,16 +55,7 @@ class Database:
             return []
 
     def fetch_one(self, query: str, params: tuple = ()) -> Optional[Tuple]:
-        """
-        Executes a query and returns one result.
-
-        Args:
-            query: SQL query to execute
-            params: Parameters for the query
-
-        Returns:
-            Tuple containing the query result or None if not found
-        """
+        """Executes a query and returns one result."""
         try:
             with self.get_cursor() as cursor:
                 cursor.execute(query, params)
@@ -94,13 +65,7 @@ class Database:
             return None
 
     def execute_many(self, query: str, params_list: List[tuple]) -> None:
-        """
-        Executes a query multiple times with different parameters.
-
-        Args:
-            query: SQL query to execute
-            params_list: List of parameter tuples
-        """
+        """Executes a query multiple times with different parameters."""
         try:
             with self.get_cursor() as cursor:
                 cursor.executemany(query, params_list)

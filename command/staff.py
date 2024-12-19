@@ -1,3 +1,5 @@
+from typing import Optional
+
 import bcrypt
 from rich import print
 from rich.console import Console
@@ -29,11 +31,13 @@ class StaffCommand:
             "delete": self.delete,
         }
 
-    def login(self, username, password) -> Staff | None:
+    def login(self, username, password) -> Optional[Staff]:
         staff = self.repo.get_by_username(username)
         if staff and bcrypt.checkpw(
             password.encode("utf-8"), staff.password.encode()
         ):
+            if staff.staff_id:
+                self.repo.update_last_login(staff.staff_id)
             return staff
         return None
 
