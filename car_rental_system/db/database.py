@@ -7,7 +7,7 @@ class Database:
     """A class to handle SQLite database operations."""
 
     def __init__(self, db_name: str = "crs.db"):
-        self.db_name = f"./db/{db_name}"
+        self.db_name = db_name
 
     @contextmanager
     def get_connection(self):
