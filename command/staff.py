@@ -8,7 +8,7 @@ from rich.table import Table
 
 import globals
 from repository.staff import Staff, StaffRepository
-from validation import get_validated_input, validate_digit, validate_email
+from util.validation import get_validated_input, validate_digit, validate_email
 
 
 class StaffCommand:

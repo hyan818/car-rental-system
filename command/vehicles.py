@@ -4,7 +4,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 from repository.vehicles import Vehicles, VehiclesRepository
-from validation import (
+from util.validation import (
     get_validated_input,
     validate_digit,
     validate_price,

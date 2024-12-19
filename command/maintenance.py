@@ -7,7 +7,7 @@ from rich.table import Table
 import globals
 from repository.maintenance import Maintenance, MaintenanceRepository
 from repository.vehicles import VehiclesRepository
-from validation import get_validated_input, validate_digit, validate_price
+from util.validation import get_validated_input, validate_digit, validate_price
 
 
 class MaintenanceCommand:

@@ -7,7 +7,7 @@ from rich.table import Table
 import globals
 from repository.rentals import Rentals, RentalsRepository
 from repository.vehicles import VehiclesRepository
-from validation import get_validated_input, validate_digit
+from util.validation import get_validated_input, validate_digit
 
 
 class RentalCommand:
