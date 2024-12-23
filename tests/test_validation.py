@@ -4,6 +4,7 @@ from car_rental_system.util.validation import (
     validate_digit,
     validate_email,
     validate_phone,
+    validate_price,
     validate_year,
 )
 
@@ -62,3 +63,19 @@ def test_validate_year():
     assert validate_year(str(current_year + 2)) is False  # Too far in future
     assert validate_year("abc") is False
     assert validate_year("") is False
+
+
+@pytest.mark.parametrize(
+    "price,expected",
+    [
+        ("100", False),
+        ("100.00", True),
+        ("1.2.3", False),
+        ("abc", False),
+        ("12b", False),
+        ("100.0023", False),
+        ("-1", False),
+    ],
+)
+def test_validate_price(price, expected):
+    assert validate_price(price) == expected

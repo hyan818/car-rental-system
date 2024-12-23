@@ -1,4 +1,6 @@
 import datetime
+import re
+from decimal import Decimal, InvalidOperation
 
 from rich import print
 from rich.prompt import Prompt
@@ -38,14 +40,14 @@ def get_validated_input(prompt, validator=None, optional=False):
 
 def validate_price(price: str) -> bool:
     """Validates if the given price is a positive number."""
+    if not re.match(r"^\d+\.\d{2}$", price):
+        print("[red]Price must be a valid number.[red]")
+        return False
     try:
-        price_float = float(price)
-        if price_float <= 0:
-            print("[red]Price must be greater than 0[/red]")
-            return False
+        Decimal(price)
         return True
-    except ValueError:
-        print("[red]Price must be a valid number[/red]")
+    except InvalidOperation:
+        print("[red]Price must be a valid number.[red]")
         return False
 
 
