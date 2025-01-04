@@ -1,26 +1,42 @@
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role_id INTEGER,
+    last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles (role_id)
+);
+
+CREATE TABLE roles (
+    role_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role_name TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE staff (
     staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    user_id INTEGER,
     full_name TEXT NOT NULL,
     email TEXT UNIQUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    last_login DATETIME
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     full_name TEXT NOT NULL,
-    email TEXT UNIQUE,
-    phone TEXT,
+    email TEXT UNIQUE NOT NULL,
+    phone TEXT NOT NULL,
     address TEXT,
-    driver_license TEXT UNIQUE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    driver_license TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE vehicles (
     vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    brand TEXT NOT NULL,
+    make TEXT NOT NULL,
     model TEXT NOT NULL,
     year INTEGER NOT NULL,
     license_plate TEXT UNIQUE NOT NULL,
@@ -41,8 +57,14 @@ CREATE TABLE rentals (
     initial_mileage INTEGER,
     return_mileage INTEGER,
     rental_status TEXT CHECK (
-        rental_status IN ('active', 'completed', 'cancelled')
-    ) DEFAULT 'active',
+        rental_status IN (
+            'apply',
+            'active',
+            'reject',
+            'completed',
+            'cancelled'
+        )
+    ) DEFAULT 'apply',
     total_cost DECIMAL(10, 2),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id),
@@ -50,29 +72,25 @@ CREATE TABLE rentals (
     FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
 );
 
-CREATE TABLE maintenance (
-    maintenance_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    vehicle_id INTEGER,
-    staff_id INTEGER,
-    description TEXT NOT NULL,
-    maintenance_date DATETIME NOT NULL,
-    cost DECIMAL(10, 2),
-    status TEXT CHECK (status IN ('scheduled', 'ongoing', 'completed')) DEFAULT 'scheduled',
-    completion_date DATETIME,
-    notes TEXT,
-    FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id),
-    FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
-);
+INSERT INTO
+    roles (role_name)
+VALUES
+    ('staff'),
+    ('customer');
 
 INSERT INTO
-    staff (username, password, full_name, email)
+    users (username, password, role_id)
 VALUES
     (
         'admin',
         '$2b$12$LWdTnqauV6Qxv2wcKl306ehLM0zUCKlvFKJiY5NF7qLySZD6qBxQS',
-        'Admin User',
-        'admin@email.com'
+        1
     );
+
+INSERT INTO
+    staff (user_id, full_name, email)
+VALUES
+    (1, 'Admin User', 'admin@email.com');
 
 INSERT INTO
     customers (full_name, email, phone, address, driver_license)

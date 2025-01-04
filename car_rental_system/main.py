@@ -1,57 +1,56 @@
+from typing import Optional
+
+from command.factory import CommandFactory
+from command.users import UsersCommand
+from globals import CurrentUser
 from rich import print
-from rich.prompt import Prompt
-
-import globals
-from command import maintenance
-from command.customers import CustomerCommand
-from command.help import HelpCommand
-from command.rentals import RentalCommand
-from command.staff import StaffCommand
-from command.vehicles import VehicleCommand
 
 
-def login_prompt():
-    username = Prompt.ask("Enter your username")
-    password = Prompt.ask("Enter your password", password=True)
-    staff_command = StaffCommand()
-    staff = staff_command.login(username, password)
-    if staff is None:
-        print("Invalid username or password. Please try again.")
-        login_prompt()
-    else:
-        globals.current_staff = staff
-        print(f"Welcome, {staff.full_name}!")
+def welcome_prompt() -> Optional[CurrentUser]:
+    print("""
+    Welcome to Car Rental System. (Creator by Yan Huang)
+
+    Available command:
+        /register Register a customer account
+        /login    Login into the system
+        /bye      Exit the program
+        """)
+
+    users_command = UsersCommand()
+    while True:
+        command = input(">>> ")
+        if command == "/register":
+            users_command.handle_register_command()
+            print("Use /login command to login into system")
+        elif command == "/login":
+            user = users_command.handle_login_command()
+            if user is None:
+                print(
+                    "[red]Invalid username or password. Please try again.[/red]"
+                )
+            else:
+                print(f"[green]Welcome {user.username}[/green]")
+                return user
+        elif command == "/bye":
+            return None
+        else:
+            print(f"[red]Unknow command: {command}[/red]")
 
 
 def main():
-    print("""Welcome to Car Rental System.""")
-    login_prompt()
+    current_user = welcome_prompt()
+    if current_user is None:
+        return
 
-    help_command = HelpCommand()
-    customer_command = CustomerCommand()
-    staff_command = StaffCommand()
-    vehicle_command = VehicleCommand()
-    rental_command = RentalCommand()
-    maintenance_command = maintenance.MaintenanceCommand()
     while True:
-        command = input(">>> ")
-        if command == "/bye":
+        type = input(">>> ")
+        if type == "/bye":
             print("Goodbye!")
             break
-        elif command == "/?":
-            help_command.handle_command()
-        elif command.startswith("/customer"):
-            customer_command.handle_command(command)
-        elif command.startswith("/staff"):
-            staff_command.handle(command)
-        elif command.startswith("/vehicle"):
-            vehicle_command.handle_command(command)
-        elif command.startswith("/rental"):
-            rental_command.handle_command(command)
-        elif command.startswith("/maintenance"):
-            maintenance_command.handle_command(command)
         else:
-            print(f"Unknown command: {command}")
+            command_handler = CommandFactory.get_command(type, current_user)
+            if command_handler:
+                command_handler.handle(type)
 
 
 if __name__ == "__main__":

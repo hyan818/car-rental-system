@@ -8,12 +8,10 @@ from db.database import Database
 @dataclass
 class Staff:
     staff_id: Optional[int] = None
-    username: Optional[str] = None
-    password: str = ""
+    user_id: Optional[int] = None
     full_name: Optional[str] = None
     email: Optional[str] = None
     created_at: Optional[datetime] = None
-    last_login: Optional[datetime] = None
 
 
 class StaffRepository:
@@ -31,28 +29,21 @@ class StaffRepository:
             return None
         return Staff(*result)
 
-    def update_password(self, staff: Staff):
-        """Update staff password"""
-        query = "UPDATE staff SET password = ? WHERE staff_id = ?"
-        self.db.execute(query, (staff.password, staff.staff_id))
-
     def get(self, keyword=""):
         """Retrives staffs from the database"""
         query = """
-        SELECT staff_id, username, full_name, email, last_login FROM staff WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ?
+        SELECT staff_id, user_id, full_name, email, created_at FROM staff WHERE full_name LIKE ? OR email LIKE ?
         """
-        return self.db.fetch_all(
-            query, (f"%{keyword}%", f"%{keyword}%", f"%{keyword}%")
-        )
+        return self.db.fetch_all(query, (f"%{keyword}%", f"%{keyword}%"))
 
     def add(self, staff: Staff):
         """Adds a new staff to the database"""
         query = """
-        INSERT INTO staff(username, password, full_name, email) VALUES(?, ?, ?, ?)
+        INSERT INTO staff(user_id, full_name, email) VALUES(?, ?, ?)
         """
         self.db.execute(
             query,
-            (staff.username, staff.password, staff.full_name, staff.email),
+            (staff.user_id, staff.full_name, staff.email),
         )
 
     def update(self, staff: Staff):
@@ -65,17 +56,15 @@ class StaffRepository:
 
         query = """
         UPDATE staff
-        SET username = ?,
-            full_name = ?,
+        SET full_name = ?,
             email = ?
         WHERE staff_id = ?
         """
         self.db.execute(
             query,
             (
-                staff.username or current_staff[1],
-                staff.full_name or current_staff[2],
-                staff.email or current_staff[3],
+                staff.full_name or current_staff[1],
+                staff.email or current_staff[2],
                 staff.staff_id,
             ),
         )
@@ -85,7 +74,16 @@ class StaffRepository:
         query = "DELETE FROM staff WHERE staff_id = ?"
         self.db.execute(query, (staff_id,))
 
-    def update_last_login(self, staff_id: int) -> None:
-        """Update staff last login time"""
-        query = "UPDATE staff SET last_login = ? where staff_id = ?"
-        self.db.execute(query, (datetime.now(), staff_id))
+    def get_by_user_id(self, user_id) -> Optional[Staff]:
+        query = "SELECT * from STAFF WHERE user_id = ?"
+        result = self.db.fetch_one(query, (user_id,))
+        if result is None:
+            return None
+        return Staff(*result)
+
+    def get_by_staff_id(self, staff_id) -> Optional[Staff]:
+        query = "SELECT * from STAFF WHERE staff_id = ?"
+        result = self.db.fetch_one(query, (staff_id,))
+        if result is None:
+            return None
+        return Staff(*result)

@@ -2,6 +2,8 @@ import sqlite3
 from contextlib import contextmanager
 from typing import List, Optional, Tuple
 
+from rich import print
+
 
 class Database:
     """A class to handle SQLite database operations."""
@@ -35,11 +37,12 @@ class Database:
             finally:
                 cursor.close()
 
-    def execute(self, query: str, params: tuple = ()) -> None:
+    def execute(self, query: str, params: tuple = ()) -> sqlite3.Cursor:
         """Executes a query and commits changes."""
         try:
             with self.get_cursor() as cursor:
                 cursor.execute(query, params)
+                return cursor
         except sqlite3.Error as e:
             print(f"[red]Database error: {e}[/red]")
             raise

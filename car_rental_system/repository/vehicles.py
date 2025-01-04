@@ -7,7 +7,7 @@ from db.database import Database
 @dataclass
 class Vehicles:
     vehicle_id: Optional[int] = None
-    brand: str = ""
+    make: str = ""
     model: str = ""
     year: Optional[int] = None
     license_plate: str = ""
@@ -23,25 +23,29 @@ class VehiclesRepository:
     def __init__(self):
         self.db = Database()
 
-    def get(self, search_str: str = "") -> List[Tuple]:
+    def get(self, search_str: str = "", status: str = "") -> List[Tuple]:
         """Retrieves vehicles from the database."""
         query = """
-        SELECT vehicle_id, brand, model, year, license_plate, mileage, daily_rate, description, status
+        SELECT vehicle_id, make, model, year, license_plate, mileage, daily_rate, description, status
         FROM vehicles
-        WHERE brand LIKE ?
+        WHERE make LIKE ?
         """
-        return self.db.fetch_all(query, (f"%{search_str}%",))
+        if status:
+            query += " and status = ?"
+            return self.db.fetch_all(query, (f"%{search_str}%", status))
+        else:
+            return self.db.fetch_all(query, (f"%{search_str}%",))
 
     def add(self, vehicle: Vehicles) -> None:
         """Adds a new vehicle to the database."""
         query = """
-        INSERT INTO vehicles (brand, model, year, license_plate, mileage, daily_rate, description, status)
+        INSERT INTO vehicles (make, model, year, license_plate, mileage, daily_rate, description, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
         self.db.execute(
             query,
             (
-                vehicle.brand,
+                vehicle.make,
                 vehicle.model,
                 vehicle.year,
                 vehicle.license_plate,
@@ -63,7 +67,7 @@ class VehiclesRepository:
         # Update only the fields that were provided
         query = """
         UPDATE vehicles
-        SET brand = ?,
+        SET make = ?,
             model = ?,
             year = ?,
             license_plate = ?,
@@ -77,7 +81,7 @@ class VehiclesRepository:
         self.db.execute(
             query,
             (
-                vehicle.brand or current_vehicle[1],
+                vehicle.make or current_vehicle[1],
                 vehicle.model or current_vehicle[2],
                 vehicle.year or current_vehicle[3],
                 vehicle.license_plate or current_vehicle[4],
@@ -102,7 +106,7 @@ class VehiclesRepository:
     def get_by_id(self, vehicle_id: int) -> Optional[Vehicles]:
         """Retrieves a vehicle by ID."""
         query = """
-        SELECT vehicle_id, brand, model, year, license_plate, mileage, daily_rate, description, status
+        SELECT vehicle_id, make, model, year, license_plate, mileage, daily_rate, description, status
         FROM vehicles
         WHERE vehicle_id = ?
         """

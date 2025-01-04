@@ -16,7 +16,7 @@ class Rentals:
     actual_return_date: Optional[datetime] = None
     initial_mileage: int = 0
     return_mileage: int = 0
-    rental_status: str = "active"
+    rental_status: str = "apply"
     total_cost: Optional[float] = None
     created_at: Optional[datetime] = None
 
@@ -27,19 +27,29 @@ class RentalsRepository:
     def __init__(self):
         self.db = Database()
 
-    def get(self, status: str = "") -> List[Tuple]:
+    def get(self, status: str = "", customer_id: int = 0) -> List[Tuple]:
         """Retrieves rentals from the database."""
         query = """
-        SELECT r.rental_id, v.brand, v.model, c.full_name,
+        SELECT r.rental_id, v.make, v.model, c.full_name,
                r.start_date, r.expected_return_date, r.actual_return_date,
                r.initial_mileage, r.return_mileage, r.rental_status, r.total_cost
         FROM rentals r
         JOIN vehicles v ON r.vehicle_id = v.vehicle_id
         JOIN customers c ON r.customer_id = c.customer_id
         WHERE r.rental_status LIKE ?
-        ORDER BY r.rental_id DESC
         """
-        return self.db.fetch_all(query, (f"%{status}%",))
+        if customer_id != 0:
+            query += " AND c.customer_id = ? ORDER BY r.rental_id DESC"
+            return self.db.fetch_all(
+                query,
+                (
+                    f"%{status}%",
+                    customer_id,
+                ),
+            )
+        else:
+            query += " ORDER BY r.rental_id DESC "
+            return self.db.fetch_all(query, (f"%{status}%",))
 
     def add(self, rental: Rentals) -> None:
         """Creates a new rental record."""
@@ -77,14 +87,20 @@ class RentalsRepository:
         """
         self.db.execute(query, (return_mileage, actual_return_date, rental_id))
 
-    def cancel_rental(self, rental_id: int) -> None:
+    def update_status(self, rental_id: int, status: str) -> None:
         """Cancels a rental."""
         query = """
         UPDATE rentals
-        SET rental_status = 'cancelled'
+        SET rental_status = ?
         WHERE rental_id = ?
         """
-        self.db.execute(query, (rental_id,))
+        self.db.execute(
+            query,
+            (
+                status,
+                rental_id,
+            ),
+        )
 
     def get_by_id(self, rental_id: int) -> Optional[Rentals]:
         """Retrieves a rental record by ID."""

@@ -22,32 +22,35 @@ def validate_email(email):
 
 def validate_phone(phone):
     """Validates if the given phone is valid"""
-    if phone.isdigit() and len(phone) == 10:
+    if phone.isdigit():
         return True
     return False
 
 
-def get_validated_input(prompt, validator=None, optional=False):
+def get_validated_input(
+    prompt, error, validator=None, optional=False, password=False
+):
     """Validates input with validator"""
     while True:
-        value = Prompt.ask(prompt)
+        value = Prompt.ask(prompt, password=password)
         if optional and not value:
-            return ""
-        if not validator or validator(value):
             return value
-        print("[red]Invalid input. Please try again.[/red]")
+        if not optional and not value:
+            print("[red]The value can not be none.[/red]")
+        elif not validator or validator(value):
+            return value
+        else:
+            print(f"[red]{error}[/red]")
 
 
 def validate_price(price: str) -> bool:
     """Validates if the given price is a positive number."""
     if not re.match(r"^\d+\.\d{2}$", price):
-        print("[red]Price must be a valid number.[red]")
         return False
     try:
         Decimal(price)
         return True
     except InvalidOperation:
-        print("[red]Price must be a valid number.[red]")
         return False
 
 
@@ -58,11 +61,7 @@ def validate_year(year: str) -> bool:
         current_year = datetime.date.today().year
 
         if year_int < 1900 or year_int > current_year + 1:
-            print(
-                f"[red]Year must be between 1900 and {current_year + 1}[/red]"
-            )
             return False
         return True
     except ValueError:
-        print("[red]Year must be a valid number[/red]")
         return False

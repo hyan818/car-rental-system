@@ -1,9 +1,11 @@
+from command.factory import Command
+from globals import CurrentUser
+from repository.customers import Customers, CustomersRepository
+from repository.users import Users, UsersRepository
 from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
-
-from repository.customers import Customers, CustomersRepository
 from util.validation import (
     get_validated_input,
     validate_digit,
@@ -12,27 +14,32 @@ from util.validation import (
 )
 
 
-class CustomerCommand:
+class CustomerCommand(Command):
     HELP_MESSAGE = """
     Available Commands:
         /customer list    List customers' information
         /customer search  Search customers' information by name or phone number
         /customer add     Add a new customer
         /customer update  Update a customer information
-        /customer del     Delete a customer
+        /customer delete  Delete a customer
     """
 
-    def __init__(self) -> None:
+    def __init__(self, current_user: CurrentUser) -> None:
         self.repo = CustomersRepository()
+        self.users_repo = UsersRepository()
+        self.current_user = current_user
         self.commands = {
             "list": self.list_customers,
             "search": self.search_customer,
             "add": self.add_customer,
             "update": self.update_customer,
-            "del": self.delete_customer,
+            "delete": self.delete_customer,
         }
 
-    def handle_command(self, command):
+    def handle(self, command):
+        if self.current_user.role_name == "customer":
+            print(f"[red]Unknown command: {command}[/red]")
+            return
         parts = command.split()
         if len(parts) < 2:
             print(self.HELP_MESSAGE)
@@ -41,9 +48,9 @@ class CustomerCommand:
         subcommand = parts[1]
 
         if subcommand in self.commands:
-            return self.commands[subcommand]()
+            self.commands[subcommand]()
         else:
-            return f"unknown subcommand: {subcommand}"
+            print(f"[red]Unknown subcommand: {subcommand}[/red]")
 
     def list_customers(self):
         customers = self.repo.get(search_str="")
@@ -57,34 +64,69 @@ class CustomerCommand:
     def add_customer(self):
         print("Add a new customer...")
 
-        customer = Customers()
-        customer.full_name = get_validated_input("Enter the full name")
-        customer.email = get_validated_input("Enter the email", validate_email)
-        customer.phone = get_validated_input(
-            "Enter the phone number", validate_phone
+        username = get_validated_input(
+            "Enter your username",
+            "The username has exist, please try again.",
+            self.users_repo.check_username,
+            False,
         )
-        customer.address = get_validated_input("Enter the address")
+        customer = Customers()
+        customer.full_name = get_validated_input(
+            "Enter the full name", "Full name can not be null"
+        )
+        customer.email = get_validated_input(
+            "Enter the email", "The email is not valid", validate_email
+        )
+        customer.phone = get_validated_input(
+            "Enter the phone number",
+            "The phone number is not valid",
+            validate_phone,
+        )
+        customer.address = Prompt.ask("Enter the address")
         customer.driver_license = get_validated_input(
-            "Enter the driver license"
+            "Enter the driver license",
+            "The driver license has exist.",
+            self.repo.check_driver_license,
+            False,
         )
 
+        password = get_validated_input(
+            "Enter your password",
+            "The password is invalid",
+            optional=False,
+            password=True,
+        )
+        user = Users(username=username, password=password, role_id=2)
+        user_id = self.users_repo.add(user)
+
+        customer.user_id = user_id
         self.repo.add(customer)
 
-        print("[i]Customer added successfully[/i]")
+        print("[green]Customer added successfully[/green]")
 
     def update_customer(self):
         print("Update a customer...")
 
         customer = Customers()
-        customer.customer_id = int(
-            get_validated_input("Enter the customer id", validate_digit)
+
+        customer_id = get_validated_input(
+            "Enter the customer id",
+            "The customer id is not valid",
+            validate_digit,
         )
+        customer.customer_id = int(customer_id)
         customer.full_name = Prompt.ask("Enter the full name (optional)")
         customer.email = get_validated_input(
-            "Enter the email (optional)", validate_email, optional=True
+            "Enter the email (optional)",
+            "The email is not valid",
+            validate_email,
+            optional=True,
         )
         customer.phone = get_validated_input(
-            "Enter the phone number (optional)", validate_phone, optional=True
+            "Enter the phone number (optional)",
+            "The phone number is not valid",
+            validate_phone,
+            optional=True,
         )
         customer.address = Prompt.ask("Enter the address (optional)")
         customer.driver_license = Prompt.ask(
@@ -93,34 +135,47 @@ class CustomerCommand:
 
         self.repo.update(customer)
 
-        print("[i]Customer updated successfully[/i]")
+        print("[green]Customer updated successfully[/green]")
 
     def delete_customer(self):
         print("Delete a customer...")
 
-        id = get_validated_input("Enter the customer id", validate_digit)
+        id = get_validated_input(
+            "Enter the customer id",
+            "The customer id is not valid",
+            validate_digit,
+        )
+
+        customer = self.repo.get_by_customer_id(id)
+        if customer is None:
+            print("[red]Can not find the customer[/red]")
+            return
 
         self.repo.delete(id)
-
-        print("[i]Customer deleted successfully[/i]")
+        self.users_repo.delete(customer.user_id)
+        print("[green]Customer deleted successfully[/green]")
 
     def display_customer_table(self, customers):
         table = Table()
-        table.add_column("id")
+        table.add_column("customer_id")
+        table.add_column("user_id")
         table.add_column("full_name")
         table.add_column("email")
         table.add_column("phone")
         table.add_column("address")
         table.add_column("driver_license")
+        table.add_column("created_at")
 
         for customer in customers:
             table.add_row(
                 str(customer[0]),
-                customer[1],
+                str(customer[1]),
                 customer[2],
                 customer[3],
                 customer[4],
                 customer[5],
+                customer[6],
+                customer[7],
             )
         console = Console()
         console.print(table)

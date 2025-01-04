@@ -8,6 +8,7 @@ from db.database import Database
 @dataclass
 class Customers:
     customer_id: Optional[int] = None
+    user_id: Optional[int] = None
     full_name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
@@ -40,11 +41,12 @@ class CustomersRepository:
     def add(self, customer: Customers):
         """Adds a new customer to the database"""
         query = """
-        INSERT INTO customers(full_name, email, phone, address, driver_license) VALUES(?, ?, ?, ?, ?)
+        INSERT INTO customers(user_id, full_name, email, phone, address, driver_license) VALUES(?, ?, ?, ?, ?, ?)
         """
         self.db.execute(
             query,
             (
+                customer.user_id,
                 customer.full_name,
                 customer.email,
                 customer.phone,
@@ -88,3 +90,41 @@ class CustomersRepository:
         DELETE FROM customers WHERE customer_id = ?
         """
         self.db.execute(query, (id,))
+
+    def check_email(self, email):
+        """Check if the email is exist"""
+        query = """
+        SELECT * FROM customers WHERE email = ?
+        """
+        result = self.db.fetch_one(query, email)
+        if result is None:
+            return False
+        return True
+
+    def check_driver_license(self, driver_license):
+        """Check if the driver license is exist"""
+        query = """
+        SELECT * FROM customers WHERE driver_license = ?
+        """
+        result = self.db.fetch_one(query, (driver_license,))
+        if result is None:
+            return True
+        return False
+
+    def get_by_user_id(self, user_id) -> Optional[Customers]:
+        query = """
+        SELECT * FROM customers WHERE user_id = ?
+        """
+        result = self.db.fetch_one(query, (user_id,))
+        if result is None:
+            return None
+        return Customers(*result)
+
+    def get_by_customer_id(self, customer_id) -> Optional[Customers]:
+        query = """
+        SELECT * FROM customers WHERE customer_id = ?
+        """
+        result = self.db.fetch_one(query, (customer_id,))
+        if result is None:
+            return None
+        return Customers(*result)
