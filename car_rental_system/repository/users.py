@@ -26,14 +26,14 @@ class UsersRepository:
             return None
         return Users(*result)
 
-    def check_username(self, username):
+    def username_exists(self, username):
         query = "SELECT * FROM users WHERE username = ?"
         result = self.db.fetch_one(query, (username,))
         if result is None:
             return True
         return False
 
-    def add(self, users: Users):
+    def add_user(self, users: Users):
         password = bcrypt.hashpw(
             users.password.encode("utf-8"), bcrypt.gensalt()
         )
@@ -58,6 +58,6 @@ class UsersRepository:
         query = "UPDATE users SET password = ? WHERE user_id = ?"
         self.db.execute(query, (new_password, user_id))
 
-    def delete(self, user_id):
+    def delete_user(self, user_id):
         query = "DELETE FROM users WHERE user_id = ?"
         self.db.execute(query, (user_id,))

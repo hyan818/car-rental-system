@@ -32,7 +32,7 @@ class RentalCommand(Command):
     """
 
     def __init__(self, current_user: CurrentUser) -> None:
-        self.repo = RentalsRepository()
+        self.rental_repo = RentalsRepository()
         self.current_user = current_user
         self.customer_repo = CustomersRepository()
         self.staff_repo = StaffRepository()
@@ -75,11 +75,11 @@ class RentalCommand(Command):
                 print(f"[red]Unknown subcommand: {subcommand}[/red]")
 
     def list_rentals(self):
-        rentals = self.repo.get()
+        rentals = self.rental_repo.get_rental_details()
         self.display_rental_table(rentals)
 
     def list_active_rentals(self):
-        rentals = self.repo.get("active")
+        rentals = self.rental_repo.get_rental_details("active")
         self.display_rental_table(rentals)
 
     def add_rental(self):
@@ -145,7 +145,7 @@ class RentalCommand(Command):
         # Update vehicle status
         self.vehicle_repo.update_status(rental.vehicle_id, "rented")
 
-        self.repo.add(rental)
+        self.rental_repo.add_rental(rental)
         print("[green]Rental created successfully[/green]")
 
     def complete_rental(self):
@@ -159,7 +159,7 @@ class RentalCommand(Command):
             "Enter return mileage", "The value is not valid", validate_digit
         )
 
-        rental = self.repo.get_by_id(int(rental_id))
+        rental = self.rental_repo.get_by_id(int(rental_id))
         if not rental:
             print("[red]Rental not found[/red]")
             return
@@ -172,7 +172,7 @@ class RentalCommand(Command):
             print("[red]Vehicle not found[/red]")
             return
 
-        self.repo.complete_rental(
+        self.rental_repo.complete_rental(
             int(rental_id), int(return_mileage), datetime.now()
         )
         self.vehicle_repo.update_after_return(
@@ -186,7 +186,7 @@ class RentalCommand(Command):
         rental_id = get_validated_input(
             "Enter the rental ID", "The value is not valid", validate_digit
         )
-        rental = self.repo.get_by_id(int(rental_id))
+        rental = self.rental_repo.get_by_id(int(rental_id))
         if rental is None:
             print("[red]Can not find this rental data[/red]")
             return
@@ -195,7 +195,7 @@ class RentalCommand(Command):
                 "[red]This rental status has been changed, please check its details[/red]"
             )
             return
-        self.repo.update_status(int(rental_id), "cancel")
+        self.rental_repo.update_status(int(rental_id), "cancel")
 
         # Update the vehicle status is available
         if rental.vehicle_id:
@@ -241,7 +241,9 @@ class RentalCommand(Command):
         if customer.customer_id is None:
             print("[red]Oops, there is an error[/red]")
             return
-        rentals = self.repo.get(customer_id=customer.customer_id)
+        rentals = self.rental_repo.get_rental_details(
+            customer_id=customer.customer_id
+        )
         self.display_rental_table(rentals)
 
     def book_rental(self):
@@ -302,14 +304,14 @@ class RentalCommand(Command):
         # Update vehicle status
         self.vehicle_repo.update_status(rental.vehicle_id, "rented")
 
-        self.repo.add(rental)
+        self.rental_repo.add_rental(rental)
         print("[green]Rental created successfully[/green]")
 
     def audit_rental(self):
         rental_id = get_validated_input(
             "Enter the rental ID", "The value is not valid", validate_digit
         )
-        rental = self.repo.get_by_id(int(rental_id))
+        rental = self.rental_repo.get_by_id(int(rental_id))
         if rental is None:
             print("[red]Can not find this rental data[/red]")
             return
@@ -325,7 +327,7 @@ class RentalCommand(Command):
             default="reject",
         )
 
-        self.repo.update_status(int(rental_id), status)
+        self.rental_repo.update_status(int(rental_id), status)
 
         # If reject the application then update the vehicle status to available
         if status == "reject" and rental.vehicle_id:

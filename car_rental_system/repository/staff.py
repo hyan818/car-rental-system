@@ -20,23 +20,14 @@ class StaffRepository:
     def __init__(self):
         self.db = Database()
 
-    def get_by_username(self, username) -> Optional[Staff]:
-        """Get staff by username"""
-
-        query = "SELECT * FROM staff WHERE username = ?"
-        result = self.db.fetch_one(query, (username,))
-        if result is None:
-            return None
-        return Staff(*result)
-
-    def get(self, keyword=""):
+    def get_staffs(self, keyword=""):
         """Retrives staffs from the database"""
         query = """
         SELECT staff_id, user_id, full_name, email, created_at FROM staff WHERE full_name LIKE ? OR email LIKE ?
         """
         return self.db.fetch_all(query, (f"%{keyword}%", f"%{keyword}%"))
 
-    def add(self, staff: Staff):
+    def add_staff(self, staff: Staff):
         """Adds a new staff to the database"""
         query = """
         INSERT INTO staff(user_id, full_name, email) VALUES(?, ?, ?)
@@ -46,7 +37,7 @@ class StaffRepository:
             (staff.user_id, staff.full_name, staff.email),
         )
 
-    def update(self, staff: Staff):
+    def update_staff(self, staff: Staff):
         """Updates an existing staff in the database"""
         query = "SELECT * FROM staff WHERE staff_id = ?"
         current_staff = self.db.fetch_one(query, (staff.staff_id,))
@@ -69,7 +60,7 @@ class StaffRepository:
             ),
         )
 
-    def delete(self, staff_id) -> None:
+    def delete_staff(self, staff_id) -> None:
         """Deletes a staff from the database"""
         query = "DELETE FROM staff WHERE staff_id = ?"
         self.db.execute(query, (staff_id,))

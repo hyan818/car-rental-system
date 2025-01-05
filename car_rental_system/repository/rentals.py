@@ -27,7 +27,9 @@ class RentalsRepository:
     def __init__(self):
         self.db = Database()
 
-    def get(self, status: str = "", customer_id: int = 0) -> List[Tuple]:
+    def get_rental_details(
+        self, status: str = "", customer_id: int = 0
+    ) -> List[Tuple]:
         """Retrieves rentals from the database."""
         query = """
         SELECT r.rental_id, v.make, v.model, c.full_name,
@@ -51,7 +53,7 @@ class RentalsRepository:
             query += " ORDER BY r.rental_id DESC "
             return self.db.fetch_all(query, (f"%{status}%",))
 
-    def add(self, rental: Rentals) -> None:
+    def add_rental(self, rental: Rentals) -> None:
         """Creates a new rental record."""
         query = """
         INSERT INTO rentals (

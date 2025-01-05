@@ -20,7 +20,7 @@ class UsersCommand:
         username = get_validated_input(
             "Enter your username",
             "The username has exist, please try again.",
-            self.users_repo.check_username,
+            self.users_repo.username_exists,
             False,
         )
 
@@ -35,7 +35,7 @@ class UsersCommand:
         driver_license = get_validated_input(
             "Enter your driver license",
             "The driver license has exist.",
-            self.customer_repo.check_driver_license,
+            self.customer_repo.driver_license_exits,
             False,
         )
         password = get_validated_input(
@@ -46,7 +46,7 @@ class UsersCommand:
         )
 
         user = Users(username=username, password=password, role_id=2)
-        user_id = self.users_repo.add(user)
+        user_id = self.users_repo.add_user(user)
 
         customer = Customers(
             full_name=full_name,
@@ -56,7 +56,7 @@ class UsersCommand:
             address=address,
             driver_license=driver_license,
         )
-        self.customer_repo.add(customer)
+        self.customer_repo.add_customer(customer)
 
         print("[green]Register successfully.[/green]")
 

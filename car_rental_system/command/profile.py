@@ -88,7 +88,7 @@ class ProfileCommand(Command):
             customer.driver_license = Prompt.ask(
                 "Enter the driver license (optional)"
             )
-            self.customer_repo.update(customer)
+            self.customer_repo.update_customer(customer)
             print("[green]Update profile successfully[/green]")
         else:
             current_staff = self.staff_repo.get_by_user_id(
@@ -105,7 +105,7 @@ class ProfileCommand(Command):
             )
             staff.full_name = full_name
             staff.email = email
-            self.staff_repo.update(staff)
+            self.staff_repo.update_staff(staff)
             print("[green]Update profile successfully[/green]")
 
     def update_password(self):

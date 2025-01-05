@@ -30,7 +30,7 @@ class VehicleCommand(Command):
     """
 
     def __init__(self, current_user: CurrentUser) -> None:
-        self.repo = VehiclesRepository()
+        self.vehicles_repo = VehiclesRepository()
         self.current_user = current_user
         self.staff_commands = {
             "list": self.list_vehicles,
@@ -67,12 +67,12 @@ class VehicleCommand(Command):
                 print(f"[red]Unknown subcommand: {subcommand}[/red]")
 
     def list_vehicles(self):
-        vehicles = self.repo.get(search_str="")
+        vehicles = self.vehicles_repo.get_vehicles(search_str="")
         self.display_vehicle_table(vehicles)
 
     def search_vehicle(self):
         keyword = Prompt.ask("Enter the make to search")
-        vehicles = self.repo.get(keyword)
+        vehicles = self.vehicles_repo.get_vehicles(keyword)
         self.display_vehicle_table(vehicles)
 
     def add_vehicle(self):
@@ -108,7 +108,7 @@ class VehicleCommand(Command):
             default="available",
         )
 
-        self.repo.add(vehicle)
+        self.vehicles_repo.add_vehicle(vehicle)
 
         print("[green]Vehicle added successfully[/green]")
 
@@ -154,7 +154,7 @@ class VehicleCommand(Command):
             show_default=False,
         )
 
-        self.repo.update(vehicle)
+        self.vehicles_repo.update_vehicle(vehicle)
 
         print("[green]Vehicle updated successfully[/green]")
 
@@ -163,7 +163,7 @@ class VehicleCommand(Command):
         id = get_validated_input(
             "Enter the vehicle id", "The value is not valid", validate_digit
         )
-        self.repo.delete(int(id))
+        self.vehicles_repo.delete_vehicle(int(id))
         print("[green]Vehicle deleted successfully[/green]")
 
     def display_vehicle_table(self, vehicles):
@@ -195,10 +195,12 @@ class VehicleCommand(Command):
         console.print(table)
 
     def list_available_vehicles(self):
-        vehicles = self.repo.get(status="available")
+        vehicles = self.vehicles_repo.get_vehicles(status="available")
         self.display_vehicle_table(vehicles)
 
     def search_avaliable_vehicles(self):
         keyword = Prompt.ask("Enter the make to search")
-        vehicles = self.repo.get(search_str=keyword, status="available")
+        vehicles = self.vehicles_repo.get_vehicles(
+            search_str=keyword, status="available"
+        )
         self.display_vehicle_table(vehicles)

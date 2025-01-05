@@ -19,15 +19,15 @@ class StaffCommand(Command):
     """
 
     def __init__(self, current_user: CurrentUser) -> None:
-        self.repo = StaffRepository()
+        self.staff_repo = StaffRepository()
         self.users_repo = UsersRepository()
         self.current_user = current_user
 
         self.commands = {
-            "list": self.list,
-            "add": self.add,
-            "update": self.update,
-            "delete": self.delete,
+            "list": self.list_staffs,
+            "add": self.add_staff,
+            "update": self.update_staff,
+            "delete": self.delete_staff,
         }
 
     def handle(self, command):
@@ -43,11 +43,11 @@ class StaffCommand(Command):
         else:
             print(f"[red]Unknown subcommand: {subcommand}[/red]")
 
-    def list(self):
-        staffs = self.repo.get()
+    def list_staffs(self):
+        staffs = self.staff_repo.get_staffs()
         self.display_staff_table(staffs)
 
-    def add(self):
+    def add_staff(self):
         print("Add a new staff...")
 
         staff = Staff()
@@ -61,7 +61,7 @@ class StaffCommand(Command):
         username = get_validated_input(
             "Enter your username",
             "The username has exist, please try again.",
-            self.users_repo.check_username,
+            self.users_repo.username_exists,
             False,
         )
 
@@ -73,15 +73,15 @@ class StaffCommand(Command):
         )
 
         user = Users(username=username, password=password, role_id=1)
-        user_id = self.users_repo.add(user)
+        user_id = self.users_repo.add_user(user)
 
         staff.user_id = user_id
 
-        self.repo.add(staff)
+        self.staff_repo.add_staff(staff)
 
         print("[green]Staff added successfully[/green]")
 
-    def update(self):
+    def update_staff(self):
         print("Update a staff... \n")
 
         staff = Staff()
@@ -97,18 +97,20 @@ class StaffCommand(Command):
         staff.full_name = full_name
         staff.email = email
 
-        self.repo.update(staff)
+        self.staff_repo.update_staff(staff)
 
         print("[green]Staff updated successfully[/green]")
 
-    def delete(self):
+    def delete_staff(self):
         print("Delete a staff... \n")
 
         staff_id = get_validated_input(
             "Enter the staff id", "The staff is not valid", validate_digit
         )
 
-        current_staff = self.repo.get_by_user_id(self.current_user.user_id)
+        current_staff = self.staff_repo.get_by_user_id(
+            self.current_user.user_id
+        )
         if current_staff is None:
             print("[red]Oops, There is an error.[/red]")
             return
@@ -120,7 +122,7 @@ class StaffCommand(Command):
             print("[red]You cannot delete yourself.[/red]")
             return
 
-        staff = self.repo.get_by_staff_id(int(staff_id))
+        staff = self.staff_repo.get_by_staff_id(int(staff_id))
         if staff is None:
             print("[red]Can not find the staff.[/red]")
             return
@@ -128,8 +130,8 @@ class StaffCommand(Command):
             print("[red]Oops, There is an error.[/red]")
             return
 
-        self.repo.delete(staff_id)
-        self.users_repo.delete(staff.user_id)
+        self.staff_repo.delete_staff(staff_id)
+        self.users_repo.delete_user(staff.user_id)
 
         print("[green]Staff deleted successfully[/green]")
 

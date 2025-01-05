@@ -23,7 +23,9 @@ class VehiclesRepository:
     def __init__(self):
         self.db = Database()
 
-    def get(self, search_str: str = "", status: str = "") -> List[Tuple]:
+    def get_vehicles(
+        self, search_str: str = "", status: str = ""
+    ) -> List[Tuple]:
         """Retrieves vehicles from the database."""
         query = """
         SELECT vehicle_id, make, model, year, license_plate, mileage, daily_rate, description, status
@@ -36,7 +38,7 @@ class VehiclesRepository:
         else:
             return self.db.fetch_all(query, (f"%{search_str}%",))
 
-    def add(self, vehicle: Vehicles) -> None:
+    def add_vehicle(self, vehicle: Vehicles) -> None:
         """Adds a new vehicle to the database."""
         query = """
         INSERT INTO vehicles (make, model, year, license_plate, mileage, daily_rate, description, status)
@@ -56,7 +58,7 @@ class VehiclesRepository:
             ),
         )
 
-    def update(self, vehicle: Vehicles) -> None:
+    def update_vehicle(self, vehicle: Vehicles) -> None:
         """Updates an existing vehicle in the database."""
         query = "SELECT * FROM vehicles WHERE vehicle_id = ?"
         current_vehicle = self.db.fetch_one(query, (vehicle.vehicle_id,))
@@ -93,7 +95,7 @@ class VehiclesRepository:
             ),
         )
 
-    def delete(self, vehicle_id: int) -> None:
+    def delete_vehicle(self, vehicle_id: int) -> None:
         """Deletes a vehicle from the database."""
         query = "DELETE FROM vehicles WHERE vehicle_id = ?"
         self.db.execute(query, (vehicle_id,))

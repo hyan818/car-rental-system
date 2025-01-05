@@ -23,7 +23,7 @@ class CustomersRepository:
     def __init__(self):
         self.db = Database()
 
-    def get(self, search_str):
+    def get_customers(self, search_str):
         """Retrieves customers from the database"""
         query = """
         SELECT * FROM customers WHERE full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR driver_license LIKE ?
@@ -38,7 +38,7 @@ class CustomersRepository:
             ),
         )
 
-    def add(self, customer: Customers):
+    def add_customer(self, customer: Customers):
         """Adds a new customer to the database"""
         query = """
         INSERT INTO customers(user_id, full_name, email, phone, address, driver_license) VALUES(?, ?, ?, ?, ?, ?)
@@ -55,7 +55,7 @@ class CustomersRepository:
             ),
         )
 
-    def update(self, customer: Customers):
+    def update_customer(self, customer: Customers):
         """Updates an existing customer in the database"""
         query = "SELECT * FROM customers WHERE customer_id = ?"
         current_customer = self.db.fetch_one(query, (customer.customer_id,))
@@ -84,14 +84,14 @@ class CustomersRepository:
             ),
         )
 
-    def delete(self, id):
+    def delete_customer(self, id):
         """Deletes a customer from the database"""
         query = """
         DELETE FROM customers WHERE customer_id = ?
         """
         self.db.execute(query, (id,))
 
-    def check_email(self, email):
+    def email_exits(self, email):
         """Check if the email is exist"""
         query = """
         SELECT * FROM customers WHERE email = ?
@@ -101,7 +101,7 @@ class CustomersRepository:
             return False
         return True
 
-    def check_driver_license(self, driver_license):
+    def driver_license_exits(self, driver_license):
         """Check if the driver license is exist"""
         query = """
         SELECT * FROM customers WHERE driver_license = ?

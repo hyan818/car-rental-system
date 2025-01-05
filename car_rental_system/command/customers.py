@@ -25,7 +25,7 @@ class CustomerCommand(Command):
     """
 
     def __init__(self, current_user: CurrentUser) -> None:
-        self.repo = CustomersRepository()
+        self.customer_repo = CustomersRepository()
         self.users_repo = UsersRepository()
         self.current_user = current_user
         self.commands = {
@@ -53,12 +53,12 @@ class CustomerCommand(Command):
             print(f"[red]Unknown subcommand: {subcommand}[/red]")
 
     def list_customers(self):
-        customers = self.repo.get(search_str="")
+        customers = self.customer_repo.get_customers(search_str="")
         self.display_customer_table(customers)
 
     def search_customer(self):
         keyword = Prompt.ask("Enter the keyword to search")
-        customers = self.repo.get(keyword)
+        customers = self.customer_repo.get_customers(keyword)
         self.display_customer_table(customers)
 
     def add_customer(self):
@@ -67,7 +67,7 @@ class CustomerCommand(Command):
         username = get_validated_input(
             "Enter your username",
             "The username has exist, please try again.",
-            self.users_repo.check_username,
+            self.users_repo.username_exists,
             False,
         )
         customer = Customers()
@@ -86,7 +86,7 @@ class CustomerCommand(Command):
         customer.driver_license = get_validated_input(
             "Enter the driver license",
             "The driver license has exist.",
-            self.repo.check_driver_license,
+            self.customer_repo.driver_license_exits,
             False,
         )
 
@@ -97,10 +97,10 @@ class CustomerCommand(Command):
             password=True,
         )
         user = Users(username=username, password=password, role_id=2)
-        user_id = self.users_repo.add(user)
+        user_id = self.users_repo.add_user(user)
 
         customer.user_id = user_id
-        self.repo.add(customer)
+        self.customer_repo.add_customer(customer)
 
         print("[green]Customer added successfully[/green]")
 
@@ -133,7 +133,7 @@ class CustomerCommand(Command):
             "Enter the driver license (optional)"
         )
 
-        self.repo.update(customer)
+        self.customer_repo.update_customer(customer)
 
         print("[green]Customer updated successfully[/green]")
 
@@ -146,13 +146,13 @@ class CustomerCommand(Command):
             validate_digit,
         )
 
-        customer = self.repo.get_by_customer_id(id)
+        customer = self.customer_repo.get_by_customer_id(id)
         if customer is None:
             print("[red]Can not find the customer[/red]")
             return
 
-        self.repo.delete(id)
-        self.users_repo.delete(customer.user_id)
+        self.customer_repo.delete_customer(id)
+        self.users_repo.delete_user(customer.user_id)
         print("[green]Customer deleted successfully[/green]")
 
     def display_customer_table(self, customers):
