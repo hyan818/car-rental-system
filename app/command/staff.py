@@ -108,9 +108,7 @@ class StaffCommand(Command):
             "Enter the staff id", "The staff is not valid", validate_digit
         )
 
-        current_staff = self.staff_repo.get_by_user_id(
-            self.current_user.user_id
-        )
+        current_staff = self.staff_repo.get_by_user_id(self.current_user.user_id)
         if current_staff is None:
             print("[red]Oops, There is an error.[/red]")
             return
@@ -145,9 +143,7 @@ class StaffCommand(Command):
         table.add_column("created_at")
 
         for staff in staffs:
-            table.add_row(
-                str(staff[0]), str(staff[1]), staff[2], staff[3], staff[4]
-            )
+            table.add_row(str(staff[0]), str(staff[1]), staff[2], staff[3], staff[4])
 
         console = Console()
         console.print(table)

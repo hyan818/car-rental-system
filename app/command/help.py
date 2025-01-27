@@ -6,8 +6,8 @@ from util.decorator import singleton
 
 @singleton
 class HelpCommand(Command):
-    STAFF_AVALIABLE_COMMANDS = """
-    Avaliable Commands:
+    STAFF_AVAILABLE_COMMANDS = """
+    Available Commands:
         /profile      View or change profile details
         /staff        Manage staff information
         /customer     Manage customer information
@@ -17,9 +17,9 @@ class HelpCommand(Command):
         /bye          Exit the program
     """
     CUSTOMER_AVAILABLE_COMMANDS = """
-    Avaliable Commands:
+    Available Commands:
         /profile      View or change profile details
-        /vehicle      View avaliable vehicles
+        /vehicle      View available vehicles
         /rental       View rental records or book a new one
         /?            Display this help message
         /bye          Exit the program
@@ -32,4 +32,4 @@ class HelpCommand(Command):
         if self.current_user.role_name == "customer":
             print(self.CUSTOMER_AVAILABLE_COMMANDS)
         else:
-            print(self.STAFF_AVALIABLE_COMMANDS)
+            print(self.STAFF_AVAILABLE_COMMANDS)

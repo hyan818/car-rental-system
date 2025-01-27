@@ -113,9 +113,7 @@ class RentalCommand(Command):
             "The value is not valid",
             validate_digit,
         )
-        rental.expected_return_date = rental.start_date + timedelta(
-            days=int(days)
-        )
+        rental.expected_return_date = rental.start_date + timedelta(days=int(days))
 
         # Get vehicle information for initial mileage and cost calculation
         vehicle = self.vehicle_repo.get_by_id(rental.vehicle_id)
@@ -164,9 +162,7 @@ class RentalCommand(Command):
             print("[red]Rental not found[/red]")
             return
         if int(return_mileage) < rental.initial_mileage:
-            print(
-                "[red]Return mileage cannot be less than initial mileage[/red]"
-            )
+            print("[red]Return mileage cannot be less than initial mileage[/red]")
             return
         if not rental.vehicle_id:
             print("[red]Vehicle not found[/red]")
@@ -175,9 +171,7 @@ class RentalCommand(Command):
         self.rental_repo.complete_rental(
             int(rental_id), int(return_mileage), datetime.now()
         )
-        self.vehicle_repo.update_after_return(
-            rental.vehicle_id, int(return_mileage)
-        )
+        self.vehicle_repo.update_after_return(rental.vehicle_id, int(return_mileage))
         print("[green]Rental completed successfully[/green]")
 
     def cancel_rental(self):
@@ -241,9 +235,7 @@ class RentalCommand(Command):
         if customer.customer_id is None:
             print("[red]Oops, there is an error[/red]")
             return
-        rentals = self.rental_repo.get_rental_details(
-            customer_id=customer.customer_id
-        )
+        rentals = self.rental_repo.get_rental_details(customer_id=customer.customer_id)
         self.display_rental_table(rentals)
 
     def book_rental(self):
@@ -273,9 +265,7 @@ class RentalCommand(Command):
             "The rental duration should be number",
             validate_digit,
         )
-        rental.expected_return_date = rental.start_date + timedelta(
-            days=int(days)
-        )
+        rental.expected_return_date = rental.start_date + timedelta(days=int(days))
 
         # Get vehicle information for initial mileage and cost calculation
         vehicle = self.vehicle_repo.get_by_id(rental.vehicle_id)

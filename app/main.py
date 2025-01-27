@@ -25,33 +25,25 @@ def welcome_prompt() -> Optional[CurrentUser]:
         elif command == "/login":
             user = users_command.handle_login_command()
             if user is None:
-                print(
-                    "[red]Invalid username or password. Please try again.[/red]"
-                )
+                print("[red]Invalid username or password. Please try again.[/red]")
             else:
                 print(f"[green]Welcome {user.username}[/green]")
                 return user
         elif command == "/bye":
             return None
         else:
-            print(f"[red]Unknow command: {command}[/red]")
-
-
-def main():
-    current_user = welcome_prompt()
-    if current_user is None:
-        return
-
-    while True:
-        type = input(">>> ")
-        if type == "/bye":
-            print("Goodbye!")
-            break
-        else:
-            command_handler = CommandFactory.get_command(type, current_user)
-            if command_handler:
-                command_handler.handle(type)
+            print(f"[red]Unknown command: {command}[/red]")
 
 
 if __name__ == "__main__":
-    main()
+    current_user = welcome_prompt()
+    if current_user is not None:
+        while True:
+            type = input(">>> ")
+            if type == "/bye":
+                print("Goodbye!")
+                break
+            else:
+                command_handler = CommandFactory.get_command(type, current_user)
+                if command_handler:
+                    command_handler.handle(type)

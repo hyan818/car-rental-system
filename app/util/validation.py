@@ -27,9 +27,7 @@ def validate_phone(phone):
     return False
 
 
-def get_validated_input(
-    prompt, error, validator=None, optional=False, password=False
-):
+def get_validated_input(prompt, error, validator=None, optional=False, password=False):
     """Validates input with validator"""
     while True:
         value = Prompt.ask(prompt, password=password)

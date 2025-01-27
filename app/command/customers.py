@@ -129,9 +129,7 @@ class CustomerCommand(Command):
             optional=True,
         )
         customer.address = Prompt.ask("Enter the address (optional)")
-        customer.driver_license = Prompt.ask(
-            "Enter the driver license (optional)"
-        )
+        customer.driver_license = Prompt.ask("Enter the driver license (optional)")
 
         self.customer_repo.update_customer(customer)
 

@@ -60,9 +60,7 @@ class CustomersRepository:
         query = "SELECT * FROM customers WHERE customer_id = ?"
         current_customer = self.db.fetch_one(query, (customer.customer_id,))
         if not current_customer:
-            raise ValueError(
-                f"Customer with ID {customer.customer_id} not found"
-            )
+            raise ValueError(f"Customer with ID {customer.customer_id} not found")
         query = """
         UPDATE customers
         SET full_name = ?,

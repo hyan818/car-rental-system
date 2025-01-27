@@ -66,9 +66,7 @@ class UsersCommand:
 
         user = self.users_repo.get_by_username(username)
 
-        if user and bcrypt.checkpw(
-            password.encode("utf-8"), user.password.encode()
-        ):
+        if user and bcrypt.checkpw(password.encode("utf-8"), user.password.encode()):
             if user.user_id:
                 self.users_repo.update_last_login(user.user_id)
             role = self.roles_repo.get_role(user.role_id)

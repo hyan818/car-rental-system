@@ -15,13 +15,13 @@ class Staff:
 
 
 class StaffRepository:
-    """Datbase operations for staff table"""
+    """Database operations for staff table"""
 
     def __init__(self):
         self.db = Database()
 
     def get_staffs(self, keyword=""):
-        """Retrives staffs from the database"""
+        """Retrieve staffs from the database"""
         query = """
         SELECT staff_id, user_id, full_name, email, created_at FROM staff WHERE full_name LIKE ? OR email LIKE ?
         """

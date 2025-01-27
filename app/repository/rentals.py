@@ -27,9 +27,7 @@ class RentalsRepository:
     def __init__(self):
         self.db = Database()
 
-    def get_rental_details(
-        self, status: str = "", customer_id: int = 0
-    ) -> List[Tuple]:
+    def get_rental_details(self, status: str = "", customer_id: int = 0) -> List[Tuple]:
         """Retrieves rentals from the database."""
         query = """
         SELECT r.rental_id, v.make, v.model, c.full_name,

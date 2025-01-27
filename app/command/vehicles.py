@@ -41,7 +41,7 @@ class VehicleCommand(Command):
         }
         self.customer_commands = {
             "list": self.list_available_vehicles,
-            "search": self.search_avaliable_vehicles,
+            "search": self.search_available_vehicles,
         }
 
     def handle(self, command):
@@ -79,9 +79,7 @@ class VehicleCommand(Command):
         print("Add a new vehicle...")
 
         vehicle = Vehicles()
-        vehicle.make = get_validated_input(
-            "Enter the make", "The make should not none"
-        )
+        vehicle.make = get_validated_input("Enter the make", "The make should not none")
         vehicle.model = get_validated_input(
             "Enter the model", "The model should not none"
         )
@@ -198,7 +196,7 @@ class VehicleCommand(Command):
         vehicles = self.vehicles_repo.get_vehicles(status="available")
         self.display_vehicle_table(vehicles)
 
-    def search_avaliable_vehicles(self):
+    def search_available_vehicles(self):
         keyword = Prompt.ask("Enter the make to search")
         vehicles = self.vehicles_repo.get_vehicles(
             search_str=keyword, status="available"

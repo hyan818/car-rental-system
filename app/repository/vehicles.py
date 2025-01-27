@@ -14,7 +14,7 @@ class Vehicles:
     mileage: Optional[int] = None
     daily_rate: Optional[float] = None
     description: str = ""
-    status: str = "available"  # available or rented or maintance
+    status: str = "available"  # available or rented or maintenance
 
 
 class VehiclesRepository:
@@ -23,9 +23,7 @@ class VehiclesRepository:
     def __init__(self):
         self.db = Database()
 
-    def get_vehicles(
-        self, search_str: str = "", status: str = ""
-    ) -> List[Tuple]:
+    def get_vehicles(self, search_str: str = "", status: str = "") -> List[Tuple]:
         """Retrieves vehicles from the database."""
         query = """
         SELECT vehicle_id, make, model, year, license_plate, mileage, daily_rate, description, status
