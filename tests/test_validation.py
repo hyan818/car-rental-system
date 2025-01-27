@@ -1,6 +1,6 @@
 import pytest
 
-from car_rental_system.util.validation import (
+from app.util.validation import (
     validate_digit,
     validate_email,
     validate_phone,
