@@ -2,7 +2,7 @@
 
 Car Rental System is a CLI (Command line interface) application which can help customers to rent cars and staffs to manage car rental information easily.
 
-**Important: This project uses SQLite as the database, which is an in-memory database. If you log out of the system, the data will be lost.**
+**❗️❗️❗️Important: This project uses SQLite as the database, which is an in-memory database. If you log out of the system, the data will be lost.**
 
 # Feature Overview
 
@@ -60,4 +60,4 @@ For making this project as simple as possible, I only use a few dependencies to 
 - [rich](https://pypi.org/project/rich/): Make output format beautiful in terminal
 - [bcrypt](https://pypi.org/project/bcrypt/): Encrypt the user's password
 - [pytest](https://pypi.org/project/pytest/): Unit Test
-- [pyinstaller](https://pypi.org/project/pyinstaller/): Build packages for different os
+- [pyinstaller](https://pypi.org/project/pyinstaller/): Build packages for different OS
