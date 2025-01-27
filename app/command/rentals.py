@@ -230,7 +230,7 @@ class RentalCommand(Command):
     def list_rental_history(self):
         customer = self.customer_repo.get_by_user_id(self.current_user.user_id)
         if customer is None:
-            print("[red]Can not find your infomation[/red]")
+            print("[red]Can not find your information[/red]")
             return
         if customer.customer_id is None:
             print("[red]Oops, there is an error[/red]")
@@ -243,7 +243,7 @@ class RentalCommand(Command):
 
         customer = self.customer_repo.get_by_user_id(self.current_user.user_id)
         if customer is None:
-            print("[red]Can not find your infomation[/red]")
+            print("[red]Can not find your information[/red]")
             return
         if customer.customer_id is None:
             print("[red]Oops, there is an error[/red]")
