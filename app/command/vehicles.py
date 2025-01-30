@@ -76,10 +76,10 @@ class VehicleCommand(Command):
         self.display_vehicle_table(vehicles)
 
     def add_vehicle(self):
-        print("Add a new vehicle...")
-
         vehicle = Vehicles()
-        vehicle.make = get_validated_input("Enter the make", "The make should not none")
+        vehicle.make = get_validated_input(
+            "Enter the make", "The make should not none"
+        )
         vehicle.model = get_validated_input(
             "Enter the model", "The model should not none"
         )
@@ -111,8 +111,6 @@ class VehicleCommand(Command):
         print("[green]Vehicle added successfully[/green]")
 
     def update_vehicle(self):
-        print("Update a vehicle...")
-
         vehicle = Vehicles()
 
         vehicle_id = get_validated_input(
@@ -157,7 +155,6 @@ class VehicleCommand(Command):
         print("[green]Vehicle updated successfully[/green]")
 
     def delete_vehicle(self):
-        print("Delete a vehicle...")
         id = get_validated_input(
             "Enter the vehicle id", "The value is not valid", validate_digit
         )

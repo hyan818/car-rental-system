@@ -3,28 +3,13 @@ from contextlib import contextmanager
 from typing import List, Optional, Tuple
 
 from rich import print
-import sys
-import os
-
-
-def resource_path(relative_path):
-    """
-    Get the absolute path to a resource.
-    Works for both development and PyInstaller environments.
-    """
-    if hasattr(sys, "_MEIPASS"):
-        # Running in PyInstaller bundle
-        return os.path.join(sys._MEIPASS, relative_path)
-    else:
-        # Running in local development
-        return os.path.join(os.path.abspath("."), relative_path)
 
 
 class Database:
     """A class to handle SQLite database operations."""
 
-    def __init__(self, schema_path: str = "./app/db/schema.sql"):
-        self.schema_path = schema_path
+    def __init__(self, db_path: str = "crs.db"):
+        self.db_path = db_path
 
     @contextmanager
     def get_connection(self):
@@ -32,12 +17,8 @@ class Database:
         Context manager for database connections.
         Ensures connections are properly closed after use.
         """
-        conn = sqlite3.connect(":memory:")
-        cursor = conn.cursor()
+        conn = sqlite3.connect(self.db_path)
         try:
-            with open(resource_path(self.schema_path), "r") as file:
-                sql_schema = file.read()
-            cursor.executescript(sql_schema)
             yield conn
         finally:
             conn.commit()

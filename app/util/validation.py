@@ -27,14 +27,16 @@ def validate_phone(phone):
     return False
 
 
-def get_validated_input(prompt, error, validator=None, optional=False, password=False):
+def get_validated_input(
+    prompt, error, validator=None, optional=False, password=False
+):
     """Validates input with validator"""
     while True:
         value = Prompt.ask(prompt, password=password)
         if optional and not value:
             return value
         if not optional and not value:
-            print("[red]The value can not be none.[/red]")
+            print("[red]The value cannot be empty.[/red]")
         elif not validator or validator(value):
             return value
         else:

@@ -62,8 +62,6 @@ class CustomerCommand(Command):
         self.display_customer_table(customers)
 
     def add_customer(self):
-        print("Add a new customer...")
-
         username = get_validated_input(
             "Enter your username",
             "The username has exist, please try again.",
@@ -105,8 +103,6 @@ class CustomerCommand(Command):
         print("[green]Customer added successfully[/green]")
 
     def update_customer(self):
-        print("Update a customer...")
-
         customer = Customers()
 
         customer_id = get_validated_input(
@@ -129,15 +125,15 @@ class CustomerCommand(Command):
             optional=True,
         )
         customer.address = Prompt.ask("Enter the address (optional)")
-        customer.driver_license = Prompt.ask("Enter the driver license (optional)")
+        customer.driver_license = Prompt.ask(
+            "Enter the driver license (optional)"
+        )
 
         self.customer_repo.update_customer(customer)
 
         print("[green]Customer updated successfully[/green]")
 
     def delete_customer(self):
-        print("Delete a customer...")
-
         id = get_validated_input(
             "Enter the customer id",
             "The customer id is not valid",

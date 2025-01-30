@@ -45,25 +45,26 @@ class ProfileCommand(Command):
 
     def get_details(self):
         if self.current_user.role_name == "customer":
-            customer = self.customer_repo.get_by_user_id(self.current_user.user_id)
+            customer = self.customer_repo.get_by_user_id(
+                self.current_user.user_id
+            )
             if customer is None:
-                print("[red]Can't find the details. [/red]")
+                print("[red]Can't find the customer details. [/red]")
             else:
-                print(f"Full Name: {customer.full_name}")
+                print(f"Full name: {customer.full_name}")
                 print(f"Email: {customer.email}")
                 print(f"Phone: {customer.phone}")
                 print(f"Address: {customer.address}")
-                print(f"Driver License: {customer.driver_license}")
+                print(f"Driver license: {customer.driver_license}")
         else:
             staff = self.staff_repo.get_by_user_id(self.current_user.user_id)
             if staff is None:
                 print("[red]Can't find the details. [/red]")
             else:
-                print(f"Full Name: {staff.full_name}")
+                print(f"Full name: {staff.full_name}")
                 print(f"Email: {staff.email}")
 
     def update_details(self):
-        print("Update your profile...")
         if self.current_user.role_name == "customer":
             current_customer = self.customer_repo.get_by_user_id(
                 self.current_user.user_id
@@ -83,11 +84,15 @@ class ProfileCommand(Command):
                 optional=True,
             )
             customer.address = Prompt.ask("Enter the address (optional)")
-            customer.driver_license = Prompt.ask("Enter the driver license (optional)")
+            customer.driver_license = Prompt.ask(
+                "Enter the driver license (optional)"
+            )
             self.customer_repo.update_customer(customer)
             print("[green]Update profile successfully[/green]")
         else:
-            current_staff = self.staff_repo.get_by_user_id(self.current_user.user_id)
+            current_staff = self.staff_repo.get_by_user_id(
+                self.current_user.user_id
+            )
             if current_staff is None:
                 print("[red]Can not find your data[/red]")
                 return
@@ -122,8 +127,12 @@ class ProfileCommand(Command):
             print("[red]Can not find your user details.[/red]")
             return
 
-        if bcrypt.checkpw(current_password.encode("utf-8"), user.password.encode()):
-            hashed = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
+        if bcrypt.checkpw(
+            current_password.encode("utf-8"), user.password.encode()
+        ):
+            hashed = bcrypt.hashpw(
+                new_password.encode("utf-8"), bcrypt.gensalt()
+            )
             self.user_repo.update_password(user.user_id, hashed.decode("utf-8"))
             print("[green]Password updated.[/green]")
         else:

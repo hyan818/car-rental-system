@@ -20,6 +20,22 @@ class StaffRepository:
     def __init__(self):
         self.db = Database()
 
+    def create_table(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS staff (
+            staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            full_name TEXT NOT NULL,
+            email TEXT UNIQUE,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (user_id)
+        );
+        """
+        self.db.execute(query)
+
+        q = "INSERT OR IGNORE INTO staff VALUES(1, 1, 'admin', 'admin@example.com', '2025-01-27 17:27:37.235554')"
+        self.db.execute(q)
+
     def get_staffs(self, keyword=""):
         """Retrieve staffs from the database"""
         query = """

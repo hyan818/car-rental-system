@@ -19,6 +19,22 @@ class UsersRepository:
     def __init__(self):
         self.db = Database()
 
+    def create_table(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role_id INTEGER,
+            last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (role_id) REFERENCES roles (role_id)
+        );
+        """
+        self.db.execute(query)
+
+        q = "INSERT OR IGNORE INTO users VALUES(1,'admin','$2b$12$LWdTnqauV6Qxv2wcKl306ehLM0zUCKlvFKJiY5NF7qLySZD6qBxQS',1,'2025-01-27 17:27:37.235554')"
+        self.db.execute(q)
+
     def get_by_username(self, username) -> Optional[Users]:
         query = "SELECT * FROM users WHERE username = ?"
         result = self.db.fetch_one(query, (username,))
@@ -34,9 +50,7 @@ class UsersRepository:
         return False
 
     def add_user(self, users: Users):
-        password = bcrypt.hashpw(
-            users.password.encode("utf-8"), bcrypt.gensalt()
-        )
+        password = bcrypt.hashpw(users.password.encode("utf-8"), bcrypt.gensalt())
         query = "INSERT INTO users(username, password, role_id) VALUES(?, ?, ?)"
         cursor = self.db.execute(
             query, (users.username, password.decode("utf-8"), users.role_id)

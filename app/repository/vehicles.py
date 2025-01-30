@@ -23,6 +23,36 @@ class VehiclesRepository:
     def __init__(self):
         self.db = Database()
 
+    def create_table(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS vehicles (
+                vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                make TEXT NOT NULL,
+                model TEXT NOT NULL,
+                year INTEGER NOT NULL,
+                license_plate TEXT UNIQUE NOT NULL,
+                mileage INTEGER DEFAULT 0,
+                daily_rate DECIMAL(10, 2) NOT NULL,
+                description TEXT,
+                status TEXT CHECK (status IN ('available', 'rented', 'maintenance')) DEFAULT 'available'
+        ); 
+        """
+        self.db.execute(query)
+
+        q1 = """
+            INSERT OR IGNORE INTO vehicles VALUES(1,'Toyota','Camry',2022,'ABC123',15000,45,'Comfortable midsize sedan with excellent fuel economy','available'),
+            (2,'Honda','CR-V',2021,'XYZ789',25000,55,'Popular compact SUV with plenty of cargo space','available'),
+            (3,'Ford','Mustang',2023,'MUS555',5000,75,'Sporty muscle car with powerful engine','available'),
+            (4,'BMW','3 Series',2022,'BMW444',20000,85,'Luxury sedan with premium features','available'),
+            (5,'Tesla','Model 3',2023,'TSL789',10000,95,'Electric vehicle with advanced autopilot','available'),
+            (6,'Mercedes','C-Class',2021,'MRC123',30000,80,'Elegant luxury sedan requiring scheduled service','available'),
+            (7,'Audi','Q5',2022,'AUD456',18000,75,'Premium SUV under routine maintenance','available'),
+            (8,'Volkswagen','Golf',2022,'VWG123',12000,40,'Compact hatchback with great handling','available'),
+            (9,'Hyundai','Tucson',2023,'HYN789',8100,50,'Modern SUV with latest safety features','available'),
+            (10,'Chevrolet','Malibu',2022,'CHV456',22000,45,'Reliable family sedan with good fuel efficiency','available')
+        """
+        self.db.execute(q1)
+
     def get_vehicles(self, search_str: str = "", status: str = "") -> List[Tuple]:
         """Retrieves vehicles from the database."""
         query = """

@@ -1,13 +1,15 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE roles (
+
+CREATE TABLE IF NOT EXISTS roles (
     role_id INTEGER PRIMARY KEY AUTOINCREMENT,
     role_name TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO roles VALUES(1,'staff','2024-12-31 09:45:50');
-INSERT INTO roles VALUES(2,'customer','2024-12-31 09:45:50');
-CREATE TABLE users (
+INSERT OR IGNORE INTO roles VALUES(1,'staff','2024-12-31 09:45:50');
+INSERT OR IGNORE INTO roles VALUES(2,'customer','2024-12-31 09:45:50');
+
+CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -16,7 +18,8 @@ CREATE TABLE users (
     FOREIGN KEY (role_id) REFERENCES roles (role_id)
 );
 INSERT INTO users VALUES(1,'admin','$2b$12$LWdTnqauV6Qxv2wcKl306ehLM0zUCKlvFKJiY5NF7qLySZD6qBxQS',1,'2025-01-27 17:27:37.235554');
-CREATE TABLE staff (
+
+CREATE TABLE IF NOT EXISTS staff (
     staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     full_name TEXT NOT NULL,
@@ -24,7 +27,9 @@ CREATE TABLE staff (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
-CREATE TABLE customers (
+INSERT INTO staff VALUES(1, 1, 'admin', 'admin@example.com', '2025-01-27 17:27:37.235554');
+
+CREATE TABLE IF NOT EXISTS customers (
     customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     full_name TEXT NOT NULL,
@@ -34,8 +39,9 @@ CREATE TABLE customers (
     driver_license TEXT UNIQUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
-CREATE TABLE rentals (
+)
+
+CREATE TABLE IF NOT EXISTS rentals (
     rental_id INTEGER PRIMARY KEY AUTOINCREMENT,
     vehicle_id INTEGER,
     customer_id INTEGER,
@@ -60,7 +66,7 @@ CREATE TABLE rentals (
     FOREIGN KEY (customer_id) REFERENCES customers (customer_id),
     FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
 );
-CREATE TABLE vehicles (
+CREATE TABLE IF NOT EXISTS vehicles (
     vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
     make TEXT NOT NULL,
     model TEXT NOT NULL,

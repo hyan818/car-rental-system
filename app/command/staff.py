@@ -48,11 +48,9 @@ class StaffCommand(Command):
         self.display_staff_table(staffs)
 
     def add_staff(self):
-        print("Add a new staff...")
-
         staff = Staff()
         staff.full_name = get_validated_input(
-            "Enter the full name", "The full name is not none"
+            "Enter the full name", "The full name cannot be empty"
         )
         staff.email = get_validated_input(
             "Enter the email", "The email is not valid", validate_email
@@ -60,7 +58,7 @@ class StaffCommand(Command):
 
         username = get_validated_input(
             "Enter your username",
-            "The username has exist, please try again.",
+            "The username has exist, please try another one.",
             self.users_repo.username_exists,
             False,
         )
@@ -82,8 +80,6 @@ class StaffCommand(Command):
         print("[green]Staff added successfully[/green]")
 
     def update_staff(self):
-        print("Update a staff... \n")
-
         staff = Staff()
         staff_id = get_validated_input(
             "Enter the staff id", "The staff id is not valid", validate_digit
@@ -102,13 +98,13 @@ class StaffCommand(Command):
         print("[green]Staff updated successfully[/green]")
 
     def delete_staff(self):
-        print("Delete a staff... \n")
-
         staff_id = get_validated_input(
             "Enter the staff id", "The staff is not valid", validate_digit
         )
 
-        current_staff = self.staff_repo.get_by_user_id(self.current_user.user_id)
+        current_staff = self.staff_repo.get_by_user_id(
+            self.current_user.user_id
+        )
         if current_staff is None:
             print("[red]Oops, There is an error.[/red]")
             return
@@ -143,7 +139,9 @@ class StaffCommand(Command):
         table.add_column("created_at")
 
         for staff in staffs:
-            table.add_row(str(staff[0]), str(staff[1]), staff[2], staff[3], staff[4])
+            table.add_row(
+                str(staff[0]), str(staff[1]), staff[2], staff[3], staff[4]
+            )
 
         console = Console()
         console.print(table)

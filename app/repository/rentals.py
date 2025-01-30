@@ -27,7 +27,39 @@ class RentalsRepository:
     def __init__(self):
         self.db = Database()
 
-    def get_rental_details(self, status: str = "", customer_id: int = 0) -> List[Tuple]:
+    def create_table(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS rentals (
+            rental_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            vehicle_id INTEGER,
+            customer_id INTEGER,
+            staff_id INTEGER,
+            start_date DATETIME NOT NULL,
+            expected_return_date DATETIME NOT NULL,
+            actual_return_date DATETIME,
+            initial_mileage INTEGER,
+            return_mileage INTEGER,
+            rental_status TEXT CHECK (
+                rental_status IN (
+                    'apply',
+                    'active',
+                    'reject',
+                    'completed',
+                    'cancelled'
+                )
+            ) DEFAULT 'apply',
+            total_cost DECIMAL(10, 2),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id),
+            FOREIGN KEY (customer_id) REFERENCES customers (customer_id),
+            FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
+        );
+        """
+        self.db.execute(query)
+
+    def get_rental_details(
+        self, status: str = "", customer_id: int = 0
+    ) -> List[Tuple]:
         """Retrieves rentals from the database."""
         query = """
         SELECT r.rental_id, v.make, v.model, c.full_name,
@@ -88,7 +120,7 @@ class RentalsRepository:
         self.db.execute(query, (return_mileage, actual_return_date, rental_id))
 
     def update_status(self, rental_id: int, status: str) -> None:
-        """Cancels a rental."""
+        """Update rental status."""
         query = """
         UPDATE rentals
         SET rental_status = ?

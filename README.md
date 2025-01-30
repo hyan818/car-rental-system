@@ -2,8 +2,6 @@
 
 Car Rental System is a CLI (Command line interface) application which can help customers to rent cars and staffs to manage car rental information easily.
 
-**❗️❗️❗️Important: This project uses SQLite as the database, which is an in-memory database. If you log out of the system, the data will be lost.**
-
 # Feature Overview
 
 When you run this application, it offers different features for two user roles: customer and staff. If you get stuck, you can run `/?` to get help message.

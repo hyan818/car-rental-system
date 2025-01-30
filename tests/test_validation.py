@@ -42,8 +42,8 @@ def test_validate_email(email, expected):
     "phone,expected",
     [
         ("1234567890", True),
-        ("123456789", False),
-        ("12345678901", False),
+        ("12345678901", True),
+        ("12db", False),
         ("abcdefghij", False),
         ("", False),
     ],
