@@ -39,7 +39,7 @@ python app/main.py
 
 When you run this application, it offers different features for two user roles: customer and staff. If you get stuck, you can run `/?` to get help message.
 
-**If you want to cancel input, press `ctrl+C`**
+**If you want to cancel input, press `Ctrl+C` (Press `Ctrl+C` can not exit program, please use `/bye` command instead.)**
 
 ## Customer features
 
@@ -69,6 +69,12 @@ When you run this application, it offers different features for two user roles: 
 /?            # Display help message
 /bye          # Exit the program
 ```
+
+## Subcommand details
+
+When you enter command like `/vehicle`, it will display available subcommands you can use.
+
+![subcommand_example](doc/subcommand_example.png)
 
 # Dependencies
 
