@@ -2,6 +2,37 @@
 
 Car Rental System is a CLI (Command line interface) application which can help customers to rent cars and staffs to manage car rental information easily.
 
+# Project Structure
+
+```bash
+car-rental-system/          # Root directory of the car rental system project
+│
+├── app/                    # Main application folder containing all business logic
+│   ├── command/            # Classes that handle commands
+│   ├── db/                 # Database schema definitions and database access classes
+│   ├── repository/         # Data access layer (repositories for handling CRUD)
+│   └── util/               # Utility functions
+├── doc/                    # Project documentation
+└── tests/                  # Unit tests
+```
+
+# Local Development Setup
+
+```bash
+# Create a virtual environment
+python3 -m venv .venv
+
+# Activate the environment
+source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate     # Windows
+
+# Install packages
+pip install -r requirements.txt
+
+# Run
+python app/main.py
+```
+
 # Feature Overview
 
 When you run this application, it offers different features for two user roles: customer and staff. If you get stuck, you can run `/?` to get help message.
@@ -33,22 +64,6 @@ When you run this application, it offers different features for two user roles: 
 /rental       # Manage rental information
 /?            # Display help message
 /bye          # Exit the program
-```
-
-# Local Development Setup
-
-```bash
-# Create a virtual environment
-python3 -m venv .venv
-
-# Activate the environment
-source .venv/bin/activate
-
-# Install packages
-pip install -r requirements.txt
-
-# Run
-python app/main.py
 ```
 
 # Dependencies
