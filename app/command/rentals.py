@@ -235,8 +235,6 @@ class RentalCommand(Command):
         self.display_rental_table(rentals)
 
     def book_rental(self):
-        print("Book a new rental...")
-
         customer = self.customer_repo.get_by_user_id(self.current_user.user_id)
         if customer is None:
             print("[red]Can not find your information[/red]")
