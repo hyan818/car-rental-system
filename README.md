@@ -2,6 +2,8 @@
 
 Car Rental System is a CLI (Command line interface) application which can help customers to rent cars and staffs to manage car rental information easily.
 
+**❗️Important: This project uses SQLite to store data. When you run this project, it will create a `crs.db` file, which is a SQLite database file. If you delete this file, you will lose all data.**
+
 # Project Structure
 
 ```bash
@@ -36,6 +38,8 @@ python app/main.py
 # Feature Overview
 
 When you run this application, it offers different features for two user roles: customer and staff. If you get stuck, you can run `/?` to get help message.
+
+**If you want to cancel input, press `ctrl+C`**
 
 ## Customer features
 
