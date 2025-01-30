@@ -6,6 +6,7 @@ from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
+from util.decorator import singleton
 from util.validation import (
     get_validated_input,
     validate_digit,
@@ -14,6 +15,7 @@ from util.validation import (
 )
 
 
+@singleton
 class CustomerCommand(Command):
     HELP_MESSAGE = """
     Available Commands:
@@ -125,9 +127,7 @@ class CustomerCommand(Command):
             optional=True,
         )
         customer.address = Prompt.ask("Enter the address (optional)")
-        customer.driver_license = Prompt.ask(
-            "Enter the driver license (optional)"
-        )
+        customer.driver_license = Prompt.ask("Enter the driver license (optional)")
 
         self.customer_repo.update_customer(customer)
 

@@ -7,9 +7,11 @@ from repository.roles import RoleRepository
 from repository.users import Users, UsersRepository
 from rich import print
 from rich.prompt import Prompt
+from util.decorator import singleton
 from util.validation import get_validated_input, validate_email
 
 
+@singleton
 class UsersCommand:
     def __init__(self):
         self.customer_repo = CustomersRepository()

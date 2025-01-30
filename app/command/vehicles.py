@@ -5,6 +5,7 @@ from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
+from util.decorator import singleton
 from util.validation import (
     get_validated_input,
     validate_digit,
@@ -13,6 +14,7 @@ from util.validation import (
 )
 
 
+@singleton
 class VehicleCommand(Command):
     STAFF_AVAILABLE_COMMANDS = """
     Available Commands:
@@ -77,9 +79,7 @@ class VehicleCommand(Command):
 
     def add_vehicle(self):
         vehicle = Vehicles()
-        vehicle.make = get_validated_input(
-            "Enter the make", "The make should not none"
-        )
+        vehicle.make = get_validated_input("Enter the make", "The make should not none")
         vehicle.model = get_validated_input(
             "Enter the model", "The model should not none"
         )
