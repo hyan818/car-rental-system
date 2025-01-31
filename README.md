@@ -26,7 +26,7 @@ python3 -m venv .venv
 
 # Activate the environment
 source .venv/bin/activate  # macOS/Linux
-.venv\Scripts\activate     # Windows
+.venv\bin\activate     # Windows
 
 # Install packages
 pip install -r requirements.txt

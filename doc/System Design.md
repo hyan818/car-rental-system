@@ -64,7 +64,7 @@ git push origin v1.0.0
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate # macOS/Linux
-.venv\Scripts\activate     # Windows
+.venv\bin\activate     # Windows
 ```
 
 2. Use Github Action CI Workflow to test different version (`.github/workflows/ci.yml`):
